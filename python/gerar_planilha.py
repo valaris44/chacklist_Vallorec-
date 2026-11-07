@@ -125,7 +125,7 @@ def set_cell(coord, value):
 
 # Try to map visible label cells (date, area, nome, matricula, setor, responsavel, assinatura)
 label_map = {}
-search_keys = ['date','data','area','nome','matricula','setor','responsavel','assinatura']
+search_keys = ['date','data','area','local','nome','matricula','setor','responsavel','responsável','assinatura']
 for row in ws.iter_rows():
     for cell in row:
         if cell.value and isinstance(cell.value, str):
@@ -153,12 +153,9 @@ def write_label(key, value):
 
 # Fill fixed mapped fields
 set_cell('A1', 'ROTA ELÉTRICA')
-write_label('area', f"LOCAL: {payload_data.get('area') or 'FÁBRICA DE LUVAS'}")
-write_label('data', payload_data.get('date',''))
-write_label('nome', payload_data.get('nome',''))
-write_label('matricula', payload_data.get('matricula',''))
-write_label('setor', payload_data.get('setor',''))
-write_label('responsavel', payload_data.get('responsavel',''))
+write_label('local', f"LOCAL: {payload_data.get('area') or 'FÁBRICA DE LUVAS'}")
+write_label('data', f"DATA: {payload_data.get('date','')}")
+write_label('responsável', f"RESPONSÁVEL: {payload_data.get('responsavel','')}")
 
 # Cabeçalho padrão do template (linha 7)
 set_cell('A7', 'ITEM A VERIFICAR')
