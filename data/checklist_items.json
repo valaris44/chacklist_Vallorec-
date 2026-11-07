@@ -1,0 +1,12 @@
+{
+  "items": [
+    {"section":"Painéis Elétricos","description":"Verificar temperatura e ventilação dos painéis"},
+    {"section":"Disjuntores","description":"Conferir posição e sinais de desgaste nos disjuntores"},
+    {"section":"Fios e Conexões","description":"Inspeção visual de cabos, terminais e conexões"},
+    {"section":"Sinalização","description":"Checar rota de emergência e sinalização elétrica"},
+    {"section":"Aterramento","description":"Medir continuidade do aterramento"},
+    {"section":"Proteções","description":"Verificar funcionamento de relés e proteções"},
+    {"section":"Instrumentação","description":"Verificar instrumentos e sensores"},
+    {"section":"Iluminação","description":"Conferir iluminação de área e painéis"}
+  ]
+}

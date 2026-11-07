@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checklist Elétrica - Vallourec (POC)</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+
+    <header class="header">
+      <div class="brand">
+        <div class="logo">Vallourec</div>
+      </div>
+
+      <div class="header-info">
+        <h1>Checklist Elétrica – Finishing</h1>
+
+        <div class="progress-wrap">
+          <span class="progress-label">Progresso do checklist</span>
+          <div class="progress">
+            <div id="progress-bar"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <form id="checklist-form">
+
+        <section class="card general">
+          <h2>Dados Gerais</h2>
+          <div class="grid">
+            <label>Data<input type="date" id="data" required></label>
+            <label>Área / Local<input type="text" id="area" required></label>
+            <label>Colaborador<input type="text" id="nome" required></label>
+            <label>Matrícula<input type="text" id="matricula" required></label>
+            <label>Setor<input type="text" id="setor"></label>
+            <label>Responsável<input type="text" id="responsavel"></label>
+          </div>
+        </section>
+
+        <section class="card checklist">
+          <h2>Itens de Verificação</h2>
+
+          <div id="itens-container">
+            <!-- Itens renderizados via JS -->
+          </div>
+
+          <button type="button" id="add-item" class="btn secondary">
+            + Adicionar item
+          </button>
+        </section>
+
+        <section class="card obs">
+          <h2>Observações Gerais</h2>
+          <textarea id="obs-geral" rows="4" placeholder="Observações adicionais..."></textarea>
+        </section>
+
+        <section class="card assinatura">
+          <h2>Assinatura do Responsável</h2>
+
+          <div class="assinatura-area">
+            <canvas id="assinatura-canvas" width="600" height="200"></canvas>
+
+            <div class="ass-buttons">
+              <button type="button" id="clear-sign" class="btn secondary">
+                Limpar assinatura
+              </button>
+            </div>
+
+            <p class="hint">
+              Assine utilizando mouse ou toque. A assinatura será incorporada ao relatório PDF.
+            </p>
+          </div>
+        </section>
+
+        <div class="actions">
+          <button type="submit" class="btn primary">
+            Finalizar e Gerar Relatório
+          </button>
+        </div>
+
+      </form>
+
+      <div id="toast" class="toast"></div>
+
+      <section class="card history">
+        <h2>Histórico de Checklists</h2>
+        <div id="history-container">(Nenhum registro carregado)</div>
+
+        <div class="actions">
+          <button id="load-history" class="btn secondary">
+            Carregar histórico
+          </button>
+        </div>
+      </section>
+
+      <!-- Modal -->
+      
+
+    </main>
+
+    <footer class="footer">
+      POC – Vallourec • Checklist Elétrica
+    </footer>
+
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
