@@ -4,6 +4,10 @@ require_once __DIR__ . '/../config/db.php';
 
 if (empty($_GET['id'])) { http_response_code(400); echo json_encode(['success'=>false,'message'=>'Missing id']); exit; }
 $id = (int)$_GET['id'];
+$stmtChecklist = $pdo->prepare('SELECT id, date, area, nome, matricula, setor, responsavel, obs_geral, pdf_path FROM checklists WHERE id = ?');
+$stmtChecklist->execute([$id]);
+$checklist = $stmtChecklist->fetch();
+if (!$checklist) { http_response_code(404); echo json_encode(['success'=>false,'message'=>'Checklist not found']); exit; }
 
 // Fetch items
 $stmt = $pdo->prepare('SELECT id, description, status, obs FROM checklist_items WHERE checklist_id = ? ORDER BY id ASC');
@@ -32,4 +36,5 @@ while($r = $stmt->fetch()){
     $items[] = ['id'=>$r['id'],'description'=>$r['description'],'status'=>$r['status'],'obs'=>$r['obs'],'photos'=>$photos];
 }
 
-echo json_encode(['success'=>true,'items'=>$items]);
+$checklist['items'] = $items;
+echo json_encode(['success'=>true,'data'=>$checklist]);

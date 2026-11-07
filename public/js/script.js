@@ -3,6 +3,9 @@
 (() => {
   // Utilidades
   const el = id => document.getElementById(id);
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[char]);
   const toast = (msg, timeout=3000) => {
     const t = el('toast');
     t.textContent = msg; t.style.display = 'block';
@@ -270,9 +273,9 @@
       const c = el('history-container');
       if(!j.data || j.data.length===0){ c.innerText = '(Nenhum registro carregado)'; return; }
       c.innerHTML = j.data.map(it => {
-        const pdfLink = it.pdf_download ? `<a href="${it.pdf_download}" target="_blank">PDF</a>` : '';
+        const pdfLink = it.pdf_download ? `<a href="${escapeHtml(it.pdf_download)}" target="_blank" rel="noopener noreferrer">PDF</a>` : '';
         return `<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--border)">
-          <div><strong>${it.nome}</strong><div class="hint">${it.date} • ${it.area}</div></div>
+          <div><strong>${escapeHtml(it.nome)}</strong><div class="hint">${escapeHtml(it.date)} • ${escapeHtml(it.area)}</div></div>
           <div style="display:flex;gap:8px;align-items:center">${pdfLink} <button class="btn secondary" data-id="${it.id}" data-action="view">Ver</button></div>
         </div>`;
       }).join('');
@@ -282,25 +285,35 @@
           const id = b.dataset.id;
           const r = await fetch(`../api/checklist_detail.php?id=${id}`);
           const d = await r.json();
+          if(!r.ok) throw new Error(d.message || 'Falha ao carregar detalhes');
           const modal = el('detail-modal'); el('detail-body').innerHTML = renderDetail(d);
           modal.hidden = false;
+          el('close-modal').focus();
         });
       });
     }catch(e){ console.error(e); toast('Erro ao carregar histórico'); }
   }
   function renderDetail(d){
-    if(!d||!d.data) return 'Erro';
+    if(!d||!d.data) return 'Erro ao carregar detalhes';
     const ck = d.data;
-    return `<div><strong>${ck.nome}</strong> — ${ck.date} • ${ck.area} <div class="hint">Matrícula: ${ck.matricula} • ${ck.setor || ''}</div>
+    return `<div><strong>${escapeHtml(ck.nome)}</strong> — ${escapeHtml(ck.date)} • ${escapeHtml(ck.area)} <div class="hint">Matrícula: ${escapeHtml(ck.matricula)} • ${escapeHtml(ck.setor || '')}</div>
       <hr>
-      ${ck.items.map(it=>`<div style="margin-bottom:12px"><div><strong>${it.description}</strong> <span class="status ${statusClass(it.status)}" style="margin-left:8px">${it.status}</span></div><div>${it.obs||''}</div>${(it.photos||[]).map(p=>`<img src="../${p}" class="thumb">`).join('')}</div>`).join('')}
+      ${(ck.items||[]).map(it=>`<div style="margin-bottom:12px"><div><strong>${escapeHtml(it.description)}</strong> <span class="status ${statusClass(it.status)}" style="margin-left:8px">${escapeHtml(it.status)}</span></div><div>${escapeHtml(it.obs||'')}</div><div class="detail-photos">${(it.photos||[]).map(photo=>{const src=typeof photo==='string'?'../'+photo:photo.download;return src?`<a href="${escapeHtml(src)}" target="_blank" rel="noopener noreferrer"><img src="${escapeHtml(src)}" class="thumb" alt="Evidência do item"></a>`:''}).join('')}</div></div>`).join('')}
       <hr>
-      <div><strong>Observações gerais</strong><div>${ck.obs_geral || ''}</div></div>
-      <div style="margin-top:12px">${ck.pdf_path ? `<a href="../${ck.pdf_path}" target="_blank" class="btn primary">Baixar PDF</a>` : ''}</div>
+      <div><strong>Observações gerais</strong><div>${escapeHtml(ck.obs_geral || '')}</div></div>
+      <div style="margin-top:12px">${ck.pdf_path ? `<a href="../${escapeHtml(ck.pdf_path)}" target="_blank" rel="noopener noreferrer" class="btn primary">Baixar PDF</a>` : ''}</div>
       </div>`;
   }
 
-  el('close-modal').addEventListener('click', ()=> el('detail-modal').hidden = true);
+  const detailModal = el('detail-modal');
+  const closeDetailModal = () => { detailModal.hidden = true; el('load-history').focus(); };
+  el('close-modal').addEventListener('click', closeDetailModal);
+  detailModal.addEventListener('click', event => {
+    if(event.target.matches('[data-close-modal]')) closeDetailModal();
+  });
+  document.addEventListener('keydown', event => {
+    if(event.key === 'Escape' && !detailModal.hidden) closeDetailModal();
+  });
   el('load-history').addEventListener('click', loadHistory);
 
   // small initialization
